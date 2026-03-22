@@ -1,5 +1,4 @@
-
-  # 🌱 Verdanist IoT Smart Greenhouse
+# 🌱 Verdanist IoT Smart Greenhouse
 
 Complete IoT monitoring and automation system for smart greenhouse management.
 
@@ -165,4 +164,3 @@ MIT License - Free for commercial and personal use
 4. **Go Live**: Your IoT system is online!
 
 🚀 **Start your smart greenhouse journey today!**
-  
