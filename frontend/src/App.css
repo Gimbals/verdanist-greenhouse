@@ -1,0 +1,62 @@
+.app-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.status-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  padding: 24px;
+  max-width: 400px;
+  width: 100%;
+}
+
+.status-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.status-item:last-child {
+  border-bottom: none;
+}
+
+.status-label {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.status-value {
+  color: #059669;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.title {
+  color: #065f46;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+.subtitle {
+  color: #047857;
+  font-size: 1.125rem;
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.footer {
+  margin-top: 32px;
+  color: #6b7280;
+  font-size: 0.875rem;
+  text-align: center;
+}
