@@ -24,6 +24,10 @@ app.use(express.json());
 
 
 
+app.get('/', (req, res) => {
+  res.send('Verdanist IoT Greenhouse Backend is running 🚀');
+});
+
 app.get('/health', async (req, res) => {
 
   const dbOk = await healthCheck();
@@ -44,9 +48,9 @@ app.use('/api', routes);
 
 
 
-const server = app.listen(config.port, () => {
+const server = app.listen(config.port, "0.0.0.0", () => {
 
-  console.log(`[Server] Verdanist backend listening on http://localhost:${config.port}`);
+  console.log(`[Server] Verdanist backend listening on http://0.0.0.0:${config.port}`);
 
 });
 
