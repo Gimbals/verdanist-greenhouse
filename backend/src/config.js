@@ -5,7 +5,7 @@ export const config = {
   nodeEnv: process.env.NODE_ENV || 'development',
   databaseUrl: process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:5432/verdanist',
   mqtt: {
-    brokerUrl: process.env.MQTT_BROKER || 'mqtt://test.mosquitto.org:1883',
+    brokerUrl: process.env.MQTT_BROKER || 'mqtt://broker.hivemq.com:1883',
     clientId: process.env.MQTT_CLIENT_ID || 'verdanist-backend',
     username: process.env.MQTT_USERNAME || undefined,
     password: process.env.MQTT_PASSWORD || undefined,

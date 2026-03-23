@@ -106,6 +106,15 @@ export function createPublisher() {
 
   client.on('error', (err) => {
     console.error('[MQTT] Publisher connection error:', err.message);
+    // Don't reconnect immediately on certain errors
+    if (err.message.includes('ECONNRESET') || err.message.includes('ECONNREFUSED')) {
+      console.log('[MQTT] Publisher will reconnect in 10 seconds...');
+      setTimeout(() => {
+        if (!client.connected) {
+          client.reconnect();
+        }
+      }, 10000);
+    }
   });
 
   client.on('close', () => console.log('[MQTT] Publisher connection closed'));

@@ -250,6 +250,15 @@ export function createSubscriber() {
 
   client.on('error', (err) => {
     console.error('[MQTT] Connection error:', err.message);
+    // Don't reconnect immediately on certain errors
+    if (err.message.includes('ECONNRESET') || err.message.includes('ECONNREFUSED')) {
+      console.log('[MQTT] Will reconnect in 10 seconds...');
+      setTimeout(() => {
+        if (!client.connected) {
+          client.reconnect();
+        }
+      }, 10000);
+    }
   });
 
 

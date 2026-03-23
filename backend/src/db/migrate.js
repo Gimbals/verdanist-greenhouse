@@ -8,7 +8,7 @@ import { fileURLToPath } from 'url';
 import { pool } from './client.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const schemaPath = path.join(__dirname, '..', 'database', 'schema.sql');
+const schemaPath = path.join(__dirname, '..', '..', 'database', 'schema.sql');
 
 /**
  * Run database migrations
