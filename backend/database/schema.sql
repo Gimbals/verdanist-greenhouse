@@ -20,8 +20,8 @@ CREATE TABLE IF NOT EXISTS devices (
   updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_devices_location ON devices(location);
-CREATE INDEX idx_devices_status ON devices(status);
+CREATE INDEX IF NOT EXISTS idx_devices_location ON devices(location);
+CREATE INDEX IF NOT EXISTS idx_devices_status ON devices(status);
 
 -- =============================================================================
 -- SENSOR_DATA
@@ -38,10 +38,10 @@ CREATE TABLE IF NOT EXISTS sensor_data (
   created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_sensor_data_device_id ON sensor_data(device_id);
-CREATE INDEX idx_sensor_data_sensor_type ON sensor_data(sensor_type);
-CREATE INDEX idx_sensor_data_timestamp ON sensor_data(timestamp DESC);
-CREATE INDEX idx_sensor_data_device_timestamp ON sensor_data(device_id, timestamp DESC);
+CREATE INDEX IF NOT EXISTS idx_sensor_data_device_id ON sensor_data(device_id);
+CREATE INDEX IF NOT EXISTS idx_sensor_data_sensor_type ON sensor_data(sensor_type);
+CREATE INDEX IF NOT EXISTS idx_sensor_data_timestamp ON sensor_data(timestamp DESC);
+CREATE INDEX IF NOT EXISTS idx_sensor_data_device_timestamp ON sensor_data(device_id, timestamp DESC);
 
 -- =============================================================================
 -- DEVICE_CONTROL
@@ -61,9 +61,9 @@ CREATE TABLE IF NOT EXISTS device_control (
   updated_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_device_control_device_id ON device_control(device_id);
-CREATE INDEX idx_device_control_status ON device_control(status);
-CREATE INDEX idx_device_control_created_at ON device_control(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_device_control_device_id ON device_control(device_id);
+CREATE INDEX IF NOT EXISTS idx_device_control_status ON device_control(status);
+CREATE INDEX IF NOT EXISTS idx_device_control_created_at ON device_control(created_at DESC);
 
 -- =============================================================================
 -- HISTORY_LOG
@@ -79,9 +79,9 @@ CREATE TABLE IF NOT EXISTS history_log (
   created_at      TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_history_log_device_id ON history_log(device_id);
-CREATE INDEX idx_history_log_timestamp ON history_log(timestamp DESC);
-CREATE INDEX idx_history_log_action ON history_log(action);
+CREATE INDEX IF NOT EXISTS idx_history_log_device_id ON history_log(device_id);
+CREATE INDEX IF NOT EXISTS idx_history_log_timestamp ON history_log(timestamp DESC);
+CREATE INDEX IF NOT EXISTS idx_history_log_action ON history_log(action);
 
 -- =============================================================================
 -- TRIGGERS

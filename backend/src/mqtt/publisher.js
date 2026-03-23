@@ -89,6 +89,7 @@ export function createPublisher() {
     reconnectPeriod: 5000,
     connectTimeout: 10000,
     keepalive: 60,
+    protocol: 'wss',
   };
   if (username) options.username = username;
   if (password) options.password = password;

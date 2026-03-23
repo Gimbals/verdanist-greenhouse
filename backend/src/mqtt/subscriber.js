@@ -220,6 +220,8 @@ export function createSubscriber() {
 
     keepalive: 60,
 
+    protocol: 'wss',
+
   };
 
   if (username) options.username = username;
