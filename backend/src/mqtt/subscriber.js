@@ -231,23 +231,15 @@ export function createSubscriber() {
 
 
   client.on('connect', () => {
-
+    console.log('[MQTT] Connected to broker:', brokerUrl);
     const topics = [...SENSOR_TOPICS_LIST, ...STATUS_TOPICS_LIST];
-
     client.subscribe(topics, { qos: 1 }, (err) => {
-
       if (err) {
-
         console.error('[MQTT] subscribe error', err);
-
         return;
-
       }
-
       console.log('[MQTT] subscribed to', topics.length, 'topics');
-
     });
-
   });
 
 

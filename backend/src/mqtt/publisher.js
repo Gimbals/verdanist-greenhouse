@@ -95,7 +95,7 @@ export function createPublisher() {
   const client = mqtt.connect(brokerUrl, options);
 
   client.on('connect', () => {
-    console.log('[MQTT] publisher connected');
+    console.log('[MQTT] Publisher connected to broker:', brokerUrl);
     processPendingControls(client).catch((err) => console.error('[MQTT] process pending controls', err));
   });
 
