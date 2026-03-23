@@ -210,13 +210,15 @@ export function createSubscriber() {
 
   const options = {
 
-    clientId: clientId + '-sub',
+    clientId: clientId + '-sub-' + Math.random().toString(16).substr(2, 8),
 
     clean: true,
 
     reconnectPeriod: 5000,
 
     connectTimeout: 10000,
+
+    keepalive: 60,
 
   };
 
@@ -240,6 +242,14 @@ export function createSubscriber() {
       }
       console.log('[MQTT] subscribed to', topics.length, 'topics');
     });
+  });
+
+  client.on('reconnect', () => {
+    console.log('[MQTT] Reconnecting to broker...');
+  });
+
+  client.on('error', (err) => {
+    console.error('[MQTT] Connection error:', err.message);
   });
 
 

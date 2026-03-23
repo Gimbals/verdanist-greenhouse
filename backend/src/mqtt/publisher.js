@@ -84,10 +84,11 @@ export async function processPendingControls(client) {
 export function createPublisher() {
   const { brokerUrl, clientId, username, password } = config.mqtt;
   const options = {
-    clientId: clientId + '-pub',
+    clientId: clientId + '-pub-' + Math.random().toString(16).substr(2, 8),
     clean: true,
     reconnectPeriod: 5000,
     connectTimeout: 10000,
+    keepalive: 60,
   };
   if (username) options.username = username;
   if (password) options.password = password;
@@ -99,8 +100,15 @@ export function createPublisher() {
     processPendingControls(client).catch((err) => console.error('[MQTT] process pending controls', err));
   });
 
-  client.on('error', (err) => console.error('[MQTT] publisher error', err));
-  client.on('close', () => console.log('[MQTT] publisher connection closed'));
+  client.on('reconnect', () => {
+    console.log('[MQTT] Publisher reconnecting...');
+  });
+
+  client.on('error', (err) => {
+    console.error('[MQTT] Publisher connection error:', err.message);
+  });
+
+  client.on('close', () => console.log('[MQTT] Publisher connection closed'));
 
   return client;
 }
