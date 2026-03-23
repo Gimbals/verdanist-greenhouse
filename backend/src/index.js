@@ -12,6 +12,8 @@ import { createSubscriber } from './mqtt/subscriber.js';
 
 import { createPublisher } from './mqtt/publisher.js';
 
+import { runMigrations } from './db/migrate.js';
+
 
 
 const app = express();
@@ -48,9 +50,17 @@ app.use('/api', routes);
 
 
 
-const server = app.listen(config.port, "0.0.0.0", () => {
+const server = app.listen(config.port, "0.0.0.0", async () => {
 
   console.log(`[Server] Verdanist backend listening on http://0.0.0.0:${config.port}`);
+
+  // Run database migrations on startup
+  try {
+    await runMigrations();
+    console.log('[Database] Migrations completed successfully');
+  } catch (err) {
+    console.error('[Database] Migration failed:', err.message);
+  }
 
 });
 
