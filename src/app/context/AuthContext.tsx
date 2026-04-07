@@ -116,7 +116,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const loginWithGoogle = async () => {
     try {
         setIsLoading(true);
-        const redirectTo = `${window.location.origin}/auth/callback`;
+        // Dynamic redirect URL based on environment
+        const isProduction = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+        const baseUrl = isProduction ? 'https://verdanist-greenhouse-g3e6.vercel.app' : window.location.origin;
+        const redirectTo = `${baseUrl}/auth/callback`;
+        
+        console.log("🔐 Google OAuth redirect to:", redirectTo);
+        
         const { error } = await supabase.auth.signInWithOAuth({
             provider: "google",
             options: { redirectTo },
@@ -139,8 +145,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
         throw error;
     } finally {
-        // In most cases the browser will redirect away before this runs,
-        // but keep state consistent if it doesn't.
         setIsLoading(false);
     }
   };
