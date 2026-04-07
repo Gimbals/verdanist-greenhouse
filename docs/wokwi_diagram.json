@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "author": "Wokwi ESP32 Firebase Simulator",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "wokwi-esp32-dev-board-v1",
+      "id": "esp32",
+      "top": 0,
+      "left": 0,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-dht22",
+      "id": "dht22",
+      "top": -100,
+      "left": 100,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-rgb-led",
+      "id": "rgb",
+      "top": -50,
+      "left": 200,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-slide-switch",
+      "id": "switch",
+      "top": 0,
+      "left": 300,
+      "attrs": {}
+    }
+  ],
+  "connections": [
+    ["esp32:TX", "dht22:VIN", "red", "vcc"],
+    ["esp32:GND", "dht22:GND", "black", "gnd"],
+    ["esp32:4", "dht22:OUT", "green", "dht-data"],
+    ["esp32:25", "rgb:R", "red", "led-r"],
+    ["esp32:26", "rgb:G", "green", "led-g"],
+    ["esp32:27", "rgb:B", "blue", "led-b"],
+    ["esp32:GND", "rgb:GND", "black", "led-gnd"]
+  ],
+  "dependencies": {
+    "esphome": "^2023.8.0"
+  }
+}

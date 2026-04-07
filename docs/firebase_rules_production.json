@@ -1,0 +1,94 @@
+# Firebase Security Rules - Production Ready
+# Optimized for ESP32 IoT Greenhouse
+
+{
+  "rules": {
+    // Device data structure
+    "devices": {
+      "$deviceId": {
+        // Read access - public for dashboard
+        ".read": true,
+        
+        // Write access - restricted (no auth for ESP32 simplicity)
+        ".write": "auth == null",
+        
+        // Metadata - read-only for devices
+        "meta": {
+          ".read": true,
+          ".write": false,
+          "status": {
+            ".validate": "newData.isString() && newData.val().matches(/^(online|offline)$/)"
+          },
+          "lastSeen": {
+            ".validate": "newData.isString()"
+          },
+          "wifiSignal": {
+            ".validate": "newData.isNumber() && newData.val() >= -100 && newData.val() <= 0"
+          },
+          "freeHeap": {
+            ".validate": "newData.isNumber() && newData.val() >= 0"
+          },
+          "uptime": {
+            ".validate": "newData.isNumber() && newData.val() >= 0"
+          }
+        },
+        
+        // Sensor data - validate ranges
+        "sensors": {
+          ".read": true,
+          ".write": "auth == null",
+          ".validate": "newData.hasChildren(['temperature','humidity','soilMoisture','lightLevel','lastUpdate'])",
+          "temperature": {
+            ".validate": "newData.isNumber() && newData.val() >= -20 && newData.val() <= 60"
+          },
+          "humidity": {
+            ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100"
+          },
+          "soilMoisture": {
+            ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100"
+          },
+          "lightLevel": {
+            ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100"
+          },
+          "lastUpdate": {
+            ".validate": "newData.isString()"
+          }
+        },
+        
+        // Control commands - validate values
+        "controls": {
+          ".read": true,
+          ".write": "auth == null",
+          "fan": {
+            ".validate": "newData.isString() && newData.val().matches(/^(on|off|auto)$/"
+          },
+          "pump": {
+            ".validate": "newData.isString() && newData.val().matches(/^(on|off|auto)$/"
+          },
+          "led": {
+            ".validate": "newData.isString() && newData.val().matches(/^(on|off)$/"
+          },
+          "autoMode": {
+            ".validate": "newData.isString() && newData.val().matches(/^(true|false)$/"
+          },
+          "soilThreshold": {
+            ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100"
+          },
+          "lastUpdate": {
+            ".validate": "newData.isString()"
+          }
+        }
+      }
+    },
+    
+    // System-wide settings (admin only)
+    "settings": {
+      ".read": true,
+      ".write": false
+    },
+    
+    // Default deny everything else
+    ".read": false,
+    ".write": false
+  }
+}

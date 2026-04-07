@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ESP32 Firebase Simulator</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .sensor-card { background: #f0f0f0; padding: 15px; margin: 10px 0; border-radius: 8px; }
+        .control-card { background: #e8f5e8; padding: 15px; margin: 10px 0; border-radius: 8px; }
+        .status-card { background: #fff3cd; padding: 15px; margin: 10px 0; border-radius: 8px; }
+        button { padding: 10px 20px; margin: 5px; border: none; border-radius: 4px; cursor: pointer; }
+        .btn-on { background: #28a745; color: white; }
+        .btn-off { background: #dc3545; color: white; }
+        .value { font-size: 24px; font-weight: bold; color: #007bff; }
+        .status { font-size: 18px; font-weight: bold; }
+        .online { color: #28a745; }
+        .offline { color: #dc3545; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌱 ESP32 Firebase Simulator</h1>
+        <p>Web-based simulator untuk testing Firebase IoT Greenhouse</p>
+        
+        <!-- Connection Status -->
+        <div class="status-card">
+            <h3>Connection Status</h3>
+            <div class="status" id="connectionStatus">Connecting...</div>
+            <div>WiFi Signal: <span id="wifiSignal">-</span> dBm</div>
+            <div>Free Memory: <span id="freeMemory">-</span> bytes</div>
+            <div>Uptime: <span id="uptime">-</span> seconds</div>
+        </div>
+        
+        <!-- Sensor Data -->
+        <div class="sensor-card">
+            <h3>📡 Sensor Data</h3>
+            <div>Temperature: <span class="value" id="temperature">25.0</span>°C</div>
+            <div>Humidity: <span class="value" id="humidity">65.0</span>%</div>
+            <div>Soil Moisture: <span class="value" id="soilMoisture">50</span>%</div>
+            <div>Light Level: <span class="value" id="lightLevel">75</span>%</div>
+            <div>Last Update: <span id="lastUpdate">-</span></div>
+        </div>
+        
+        <!-- Control Commands -->
+        <div class="control-card">
+            <h3>🎛️ Control Commands</h3>
+            <div>
+                <strong>Fan:</strong>
+                <button class="btn-on" onclick="setControl('fan', 'on')">ON</button>
+                <button class="btn-off" onclick="setControl('fan', 'off')">OFF</button>
+                <span id="fanStatus">OFF</span>
+            </div>
+            <div>
+                <strong>Pump:</strong>
+                <button class="btn-on" onclick="setControl('pump', 'on')">ON</button>
+                <button class="btn-off" onclick="setControl('pump', 'off')">OFF</button>
+                <span id="pumpStatus">OFF</span>
+            </div>
+            <div>
+                <strong>LED:</strong>
+                <button class="btn-on" onclick="setControl('led', 'on')">ON</button>
+                <button class="btn-off" onclick="setControl('led', 'off')">OFF</button>
+                <span id="ledStatus">OFF</span>
+            </div>
+        </div>
+        
+        <!-- Test Controls -->
+        <div class="control-card">
+            <h3>🧪 Test Controls</h3>
+            <button onclick="startSimulation()">Start Simulation</button>
+            <button onclick="stopSimulation()">Stop Simulation</button>
+            <button onclick="testConnection()">Test Connection</button>
+            <button onclick="clearData()">Clear Data</button>
+        </div>
+    </div>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            databaseURL: "https://verdanist-greenhouse-default-rtdb.firebaseio.com/"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Simulation variables
+        let simulationInterval = null;
+        let uptime = 0;
+        let isOnline = false;
+
+        // Device ID
+        const deviceId = "indoor-01";
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            setupFirebaseListeners();
+            updateConnectionStatus();
+            setInterval(updateUptime, 1000);
+        });
+
+        function setupFirebaseListeners() {
+            // Listen to control changes
+            const controlsRef = database.ref(`devices/${deviceId}/controls`);
+            controlsRef.on('value', (snapshot) => {
+                const controls = snapshot.val();
+                if (controls) {
+                    document.getElementById('fanStatus').textContent = controls.fan ? 'ON' : 'OFF';
+                    document.getElementById('pumpStatus').textContent = controls.pump ? 'ON' : 'OFF';
+                    document.getElementById('ledStatus').textContent = controls.led ? 'ON' : 'OFF';
+                }
+            });
+
+            // Listen to connection
+            const connectedRef = database.ref('.info/connected');
+            connectedRef.on('value', (snapshot) => {
+                isOnline = snapshot.val() === true;
+                updateConnectionStatus();
+            });
+        }
+
+        function updateConnectionStatus() {
+            const statusEl = document.getElementById('connectionStatus');
+            if (isOnline) {
+                statusEl.textContent = 'Online';
+                statusEl.className = 'status online';
+            } else {
+                statusEl.textContent = 'Offline';
+                statusEl.className = 'status offline';
+            }
+        }
+
+        function updateUptime() {
+            uptime++;
+            document.getElementById('uptime').textContent = uptime;
+        }
+
+        function setControl(control, value) {
+            const controlRef = database.ref(`devices/${deviceId}/controls/${control}`);
+            controlRef.set(value)
+                .then(() => {
+                    console.log(`${control} set to ${value}`);
+                })
+                .catch((error) => {
+                    console.error(`Failed to set ${control}:`, error);
+                });
+        }
+
+        function uploadSensorData() {
+            // Generate realistic sensor data
+            const temperature = (20 + Math.random() * 15).toFixed(1);
+            const humidity = (40 + Math.random() * 40).toFixed(1);
+            const soilMoisture = Math.floor(20 + Math.random() * 60);
+            const lightLevel = Math.floor(Math.random() * 100);
+
+            // Update display
+            document.getElementById('temperature').textContent = temperature;
+            document.getElementById('humidity').textContent = humidity;
+            document.getElementById('soilMoisture').textContent = soilMoisture;
+            document.getElementById('lightLevel').textContent = lightLevel;
+            document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
+
+            // Update WiFi simulation
+            const wifiSignal = Math.floor(-30 - Math.random() * 40);
+            const freeMemory = Math.floor(20000 + Math.random() * 10000);
+            document.getElementById('wifiSignal').textContent = wifiSignal;
+            document.getElementById('freeMemory').textContent = freeMemory;
+
+            // Upload to Firebase
+            const sensorsRef = database.ref(`devices/${deviceId}/sensors`);
+            sensorsRef.set({
+                temperature: parseFloat(temperature),
+                humidity: parseFloat(humidity),
+                soilMoisture: soilMoisture,
+                lightLevel: lightLevel
+            });
+
+            // Update device status
+            const metaRef = database.ref(`devices/${deviceId}/meta`);
+            metaRef.update({
+                status: isOnline ? 'online' : 'offline',
+                lastSeen: new Date().toISOString(),
+                wifiSignal: wifiSignal,
+                freeHeap: freeMemory,
+                uptime: uptime
+            });
+        }
+
+        function startSimulation() {
+            if (simulationInterval) return;
+            
+            simulationInterval = setInterval(() => {
+                uploadSensorData();
+            }, 10000); // Every 10 seconds
+            
+            uploadSensorData(); // Upload immediately
+            console.log('Simulation started');
+        }
+
+        function stopSimulation() {
+            if (simulationInterval) {
+                clearInterval(simulationInterval);
+                simulationInterval = null;
+                console.log('Simulation stopped');
+            }
+        }
+
+        function testConnection() {
+            uploadSensorData();
+            console.log('Connection test completed');
+        }
+
+        function clearData() {
+            const sensorsRef = database.ref(`devices/${deviceId}/sensors`);
+            const controlsRef = database.ref(`devices/${deviceId}/controls`);
+            
+            sensorsRef.set({
+                temperature: 0,
+                humidity: 0,
+                soilMoisture: 0,
+                lightLevel: 0
+            });
+            
+            controlsRef.set({
+                fan: 'off',
+                pump: 'off',
+                led: 'off'
+            });
+            
+            console.log('Data cleared');
+        }
+    </script>
+</body>
+</html>

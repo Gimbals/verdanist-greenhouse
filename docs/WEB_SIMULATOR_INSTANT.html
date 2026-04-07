@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ESP32 Firebase Simulator - Instant</title>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f5f5; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .card { background: white; padding: 20px; margin: 10px 0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .sensor-card { border-left: 4px solid #007bff; }
+        .control-card { border-left: 4px solid #28a745; }
+        .status-card { border-left: 4px solid #ffc107; }
+        .log-card { border-left: 4px solid #dc3545; }
+        button { padding: 10px 20px; margin: 5px; border: none; border-radius: 4px; cursor: pointer; }
+        .btn-on { background: #28a745; color: white; }
+        .btn-off { background: #dc3545; color: white; }
+        .btn-test { background: #007bff; color: white; }
+        .value { font-size: 24px; font-weight: bold; color: #007bff; }
+        .status { font-size: 18px; font-weight: bold; }
+        .online { color: #28a745; }
+        .offline { color: #dc3545; }
+        .log { background: #f8f9fa; padding: 10px; margin: 5px 0; border-radius: 4px; font-family: monospace; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .full { grid-column: 1 / -1; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌱 ESP32 Firebase Simulator - Instant Test</h1>
+        <p>Web-based simulator untuk testing Firebase IoT Greenhouse - No compilation needed!</p>
+        
+        <div class="grid">
+            <!-- Connection Status -->
+            <div class="card status-card">
+                <h3>📡 Connection Status</h3>
+                <div class="status" id="connectionStatus">Connecting...</div>
+                <div>WiFi Signal: <span id="wifiSignal">-</span> dBm</div>
+                <div>Free Memory: <span id="freeMemory">-</span> bytes</div>
+                <div>Uptime: <span id="uptime">-</span> seconds</div>
+                <div>Last Update: <span id="lastUpdate">-</span></div>
+            </div>
+            
+            <!-- Sensor Data -->
+            <div class="card sensor-card">
+                <h3>📡 Sensor Data</h3>
+                <div>Temperature: <span class="value" id="temperature">25.0</span>°C</div>
+                <div>Humidity: <span class="value" id="humidity">65.0</span>%</div>
+                <div>Soil Moisture: <span class="value" id="soilMoisture">50</span>%</div>
+                <div>Light Level: <span class="value" id="lightLevel">75</span>%</div>
+                <div>Upload Count: <span id="uploadCount">0</span></div>
+            </div>
+        </div>
+        
+        <!-- Control Commands -->
+        <div class="card control-card">
+            <h3>🎛️ Control Commands</h3>
+            <div>
+                <strong>Fan:</strong>
+                <button class="btn-on" onclick="setControl('fan', 'on')">ON</button>
+                <button class="btn-off" onclick="setControl('fan', 'off')">OFF</button>
+                <span id="fanStatus">OFF</span>
+            </div>
+            <div>
+                <strong>Pump:</strong>
+                <button class="btn-on" onclick="setControl('pump', 'on')">ON</button>
+                <button class="btn-off" onclick="setControl('pump', 'off')">OFF</button>
+                <span id="pumpStatus">OFF</span>
+            </div>
+            <div>
+                <strong>LED:</strong>
+                <button class="btn-on" onclick="setControl('led', 'on')">ON</button>
+                <button class="btn-off" onclick="setControl('led', 'off')">OFF</button>
+                <span id="ledStatus">OFF</span>
+            </div>
+        </div>
+        
+        <!-- Test Controls -->
+        <div class="card control-card full">
+            <h3>🧪 Test Controls</h3>
+            <button class="btn-test" onclick="startSimulation()">▶️ Start Simulation</button>
+            <button class="btn-test" onclick="stopSimulation()">⏸️ Stop Simulation</button>
+            <button class="btn-test" onclick="testConnection()">🔥 Test Connection</button>
+            <button class="btn-test" onclick="clearData()">🗑️ Clear Data</button>
+            <button class="btn-test" onclick="exportData()">📊 Export Data</button>
+        </div>
+        
+        <!-- Activity Log -->
+        <div class="card log-card full">
+            <h3>📋 Activity Log</h3>
+            <div id="activityLog"></div>
+        </div>
+    </div>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            databaseURL: "https://verdanist-greenhouse-default-rtdb.firebaseio.com/"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Simulation variables
+        let simulationInterval = null;
+        let uptime = 0;
+        let isOnline = false;
+        let uploadCount = 0;
+
+        // Device ID
+        const deviceId = "indoor-01";
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            setupFirebaseListeners();
+            updateConnectionStatus();
+            setInterval(updateUptime, 1000);
+            addLog('System initialized', 'info');
+        });
+
+        function setupFirebaseListeners() {
+            // Listen to control changes
+            const controlsRef = database.ref(`devices/${deviceId}/controls`);
+            controlsRef.on('value', (snapshot) => {
+                const controls = snapshot.val();
+                if (controls) {
+                    updateControlDisplay(controls);
+                    addLog(`Controls updated: ${JSON.stringify(controls)}`, 'success');
+                }
+            });
+
+            // Listen to connection
+            const connectedRef = database.ref('.info/connected');
+            connectedRef.on('value', (snapshot) => {
+                isOnline = snapshot.val() === true;
+                updateConnectionStatus();
+                addLog(`Firebase ${isOnline ? 'connected' : 'disconnected'}`, isOnline ? 'success' : 'error');
+            });
+        }
+
+        function updateConnectionStatus() {
+            const statusEl = document.getElementById('connectionStatus');
+            if (isOnline) {
+                statusEl.textContent = 'Online';
+                statusEl.className = 'status online';
+            } else {
+                statusEl.textContent = 'Offline';
+                statusEl.className = 'status offline';
+            }
+        }
+
+        function updateUptime() {
+            uptime++;
+            document.getElementById('uptime').textContent = uptime;
+        }
+
+        function updateControlDisplay(controls) {
+            document.getElementById('fanStatus').textContent = controls.fan ? 'ON' : 'OFF';
+            document.getElementById('pumpStatus').textContent = controls.pump ? 'ON' : 'OFF';
+            document.getElementById('ledStatus').textContent = controls.led ? 'ON' : 'OFF';
+        }
+
+        function setControl(control, value) {
+            const controlRef = database.ref(`devices/${deviceId}/controls/${control}`);
+            controlRef.set(value)
+                .then(() => {
+                    addLog(`${control} set to ${value}`, 'success');
+                })
+                .catch((error) => {
+                    addLog(`Failed to set ${control}: ${error.message}`, 'error');
+                });
+        }
+
+        function uploadSensorData() {
+            // Generate realistic sensor data
+            const temperature = (20 + Math.random() * 15).toFixed(1);
+            const humidity = (40 + Math.random() * 40).toFixed(1);
+            const soilMoisture = Math.floor(20 + Math.random() * 60);
+            const lightLevel = Math.floor(Math.random() * 100);
+
+            // Update display
+            document.getElementById('temperature').textContent = temperature;
+            document.getElementById('humidity').textContent = humidity;
+            document.getElementById('soilMoisture').textContent = soilMoisture;
+            document.getElementById('lightLevel').textContent = lightLevel;
+            document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
+
+            // Update WiFi simulation
+            const wifiSignal = Math.floor(-30 - Math.random() * 40);
+            const freeMemory = Math.floor(20000 + Math.random() * 10000);
+            document.getElementById('wifiSignal').textContent = wifiSignal;
+            document.getElementById('freeMemory').textContent = freeMemory;
+
+            // Upload to Firebase
+            const sensorsRef = database.ref(`devices/${deviceId}/sensors`);
+            sensorsRef.set({
+                temperature: parseFloat(temperature),
+                humidity: parseFloat(humidity),
+                soilMoisture: soilMoisture,
+                lightLevel: lightLevel
+            }).then(() => {
+                uploadCount++;
+                document.getElementById('uploadCount').textContent = uploadCount;
+                addLog(`Sensor data uploaded: T=${temperature}°C, H=${humidity}%, S=${soilMoisture}%, L=${lightLevel}%`, 'success');
+            }).catch((error) => {
+                addLog(`Upload failed: ${error.message}`, 'error');
+            });
+
+            // Update device status
+            const metaRef = database.ref(`devices/${deviceId}/meta`);
+            metaRef.update({
+                status: isOnline ? 'online' : 'offline',
+                lastSeen: new Date().toISOString(),
+                wifiSignal: wifiSignal,
+                freeHeap: freeMemory,
+                uptime: uptime
+            });
+        }
+
+        function startSimulation() {
+            if (simulationInterval) return;
+            
+            simulationInterval = setInterval(() => {
+                uploadSensorData();
+            }, 10000); // Every 10 seconds
+            
+            uploadSensorData(); // Upload immediately
+            addLog('Simulation started', 'info');
+        }
+
+        function stopSimulation() {
+            if (simulationInterval) {
+                clearInterval(simulationInterval);
+                simulationInterval = null;
+                addLog('Simulation stopped', 'info');
+            }
+        }
+
+        function testConnection() {
+            uploadSensorData();
+            addLog('Connection test completed', 'info');
+        }
+
+        function clearData() {
+            const sensorsRef = database.ref(`devices/${deviceId}/sensors`);
+            const controlsRef = database.ref(`devices/${deviceId}/controls`);
+            
+            sensorsRef.set({
+                temperature: 0,
+                humidity: 0,
+                soilMoisture: 0,
+                lightLevel: 0
+            });
+            
+            controlsRef.set({
+                fan: 'off',
+                pump: 'off',
+                led: 'off'
+            });
+            
+            addLog('Data cleared', 'info');
+        }
+
+        function exportData() {
+            const data = {
+                uptime: uptime,
+                uploadCount: uploadCount,
+                isOnline: isOnline,
+                timestamp: new Date().toISOString()
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `esp32-simulator-data-${Date.now()}.json`;
+            a.click();
+            
+            addLog('Data exported', 'info');
+        }
+
+        function addLog(message, type = 'info') {
+            const logEl = document.getElementById('activityLog');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log';
+            logEntry.innerHTML = `<strong>[${timestamp}]</strong> ${message}`;
+            
+            logEl.insertBefore(logEntry, logEl.firstChild);
+            
+            // Keep only last 20 entries
+            while (logEl.children.length > 20) {
+                logEl.removeChild(logEl.lastChild);
+            }
+        }
+    </script>
+</body>
+</html>

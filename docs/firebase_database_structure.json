@@ -1,0 +1,49 @@
+{
+  "devices": {
+    "indoor-01": {
+      "meta": {
+        "name": "Greenhouse Indoor",
+        "type": "esp32",
+        "location": "indoor",
+        "status": "online",
+        "lastSeen": "2026-03-24T20:23:00Z"
+      },
+      "sensors": {
+        "temperature": 28,
+        "humidity": 70,
+        "soilMoisture": 60,
+        "lightLevel": 80,
+        "lastUpdate": "2026-03-24T20:23:00Z"
+      },
+      "controls": {
+        "pump": "off",
+        "fan": "off",
+        "led": "on",
+        "autoMode": "true",
+        "soilThreshold": 40.0,
+        "lastUpdate": "2026-03-24T20:23:00Z"
+      }
+    },
+    "outdoor-01": {
+      "meta": {
+        "name": "Greenhouse Outdoor",
+        "type": "esp32",
+        "location": "outdoor",
+        "status": "online",
+        "lastSeen": "2026-03-24T20:23:00Z"
+      },
+      "sensors": {
+        "soilMoisture": 45,
+        "lightLevel": 120,
+        "lastUpdate": "2026-03-24T20:23:00Z"
+      },
+      "controls": {
+        "pump": "off",
+        "sprinkler": "off",
+        "autoMode": "true",
+        "soilThreshold": 30.0,
+        "lastUpdate": "2026-03-24T20:23:00Z"
+      }
+    }
+  }
+}

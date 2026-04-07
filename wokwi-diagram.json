@@ -1,0 +1,100 @@
+{
+  "version": 1,
+  "author": "Verdanist Greenhouse",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "wokwi-esp32-dev-board-v1",
+      "id": "esp32",
+      "top": 100,
+      "left": 200,
+      "attrs": {
+        "label": "ESP32"
+      }
+    },
+    {
+      "type": "wokwi-dht22",
+      "id": "dht22",
+      "top": 50,
+      "left": 100,
+      "attrs": {
+        "label": "DHT22 Sensor"
+      }
+    },
+    {
+      "type": "wokwi-rgb-led",
+      "id": "rgb",
+      "top": 150,
+      "left": 100,
+      "attrs": {
+        "label": "RGB LED"
+      }
+    },
+    {
+      "type": "wokwi-slide-switch",
+      "id": "switch1",
+      "top": 200,
+      "left": 50,
+      "attrs": {
+        "label": "Pump Switch"
+      }
+    },
+    {
+      "type": "wokwi-slide-switch",
+      "id": "switch2",
+      "top": 200,
+      "left": 150,
+      "attrs": {
+        "label": "Fan Switch"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "resistor1",
+      "top": 250,
+      "left": 50,
+      "attrs": {
+        "resistance": "330",
+        "label": "330Ω Resistor"
+      }
+    },
+    {
+      "type": "wokwi-resistor",
+      "id": "resistor2",
+      "top": 250,
+      "left": 150,
+      "attrs": {
+        "resistance": "330",
+        "label": "330Ω Resistor"
+      }
+    },
+    {
+      "type": "wokwi-power-supply",
+      "id": "power",
+      "top": 0,
+      "left": 300,
+      "attrs": {
+        "voltage": "3.3",
+        "label": "3.3V Power"
+      }
+    }
+  ],
+  "connections": [
+    ["esp32:TX", "dht22:VIN", "red", "vcc"],
+    ["esp32:GND", "dht22:GND", "black", "gnd"],
+    ["esp32:4", "dht22:OUT", "green", "dht-data"],
+    ["esp32:25", "rgb:R", "red", "led-r"],
+    ["esp32:26", "rgb:G", "green", "led-g"],
+    ["esp32:27", "rgb:B", "blue", "led-b"],
+    ["esp32:GND", "rgb:GND", "black", "led-gnd"],
+    ["esp32:GND", "switch1:1", "black", "switch1-gnd"],
+    ["esp32:GND", "switch2:1", "black", "switch2-gnd"],
+    ["esp32:GND", "resistor1:1", "black", "resistor1-gnd"],
+    ["esp32:GND", "resistor2:1", "black", "resistor2-gnd"],
+    ["esp32:GND", "power:GND", "black", "power-gnd"],
+    ["esp32:3V3", "power:VCC", "red", "power-vcc"]
+  ],
+  "dependencies": {
+    "esphome": "^2023.8.0"
+  }
+}

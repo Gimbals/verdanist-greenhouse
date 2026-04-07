@@ -1,0 +1,77 @@
+{
+  "rules": {
+    "devices": {
+      "$deviceId": {
+        ".read": true,
+        ".write": "auth == null",
+        "meta": {
+          ".read": true,
+          ".write": false,
+          "status": {
+            ".validate": "newData.isString() && newData.val().matches(/^(online|offline)$/"
+          },
+          "lastSeen": {
+            ".validate": "newData.isString()"
+          },
+          "wifiSignal": {
+            ".validate": "newData.isNumber() && newData.val() >= -100 && newData.val() <= 0"
+          },
+          "freeHeap": {
+            ".validate": "newData.isNumber() && newData.val() >= 0"
+          },
+          "uptime": {
+            ".validate": "newData.isNumber() && newData.val() >= 0"
+          }
+        },
+        "sensors": {
+          ".read": true,
+          ".write": "auth == null",
+          ".validate": "newData.hasChildren(['temperature','humidity','soilMoisture','lightLevel','lastUpdate'])",
+          "temperature": {
+            ".validate": "newData.isNumber() && newData.val() >= -20 && newData.val() <= 60"
+          },
+          "humidity": {
+            ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100"
+          },
+          "soilMoisture": {
+            ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100"
+          },
+          "lightLevel": {
+            ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100"
+          },
+          "lastUpdate": {
+            ".validate": "newData.isString()"
+          }
+        },
+        "controls": {
+          ".read": true,
+          ".write": "auth == null",
+          "fan": {
+            ".validate": "newData.isString() && newData.val().matches(/^(on|off|auto)$/"
+          },
+          "pump": {
+            ".validate": "newData.isString() && newData.val().matches(/^(on|off|auto)$/"
+          },
+          "led": {
+            ".validate": "newData.isString() && newData.val().matches(/^(on|off)$/"
+          },
+          "autoMode": {
+            ".validate": "newData.isString() && newData.val().matches(/^(true|false)$/"
+          },
+          "soilThreshold": {
+            ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 100"
+          },
+          "lastUpdate": {
+            ".validate": "newData.isString()"
+          }
+        }
+      }
+    },
+    "settings": {
+      ".read": true,
+      ".write": false
+    },
+    ".read": false,
+    ".write": false
+  }
+}

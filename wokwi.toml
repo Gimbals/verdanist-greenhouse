@@ -1,0 +1,35 @@
+[wokwi]
+name = "verdanist-greenhouse"
+main = "main.cpp"
+board = "esp32-devkitc"
+
+[board]
+name = "esp32-devkitc"
+
+tags = ["esp32"]
+
+[dependencies]
+FirebaseESP32 = "^3.9.0"
+ArduinoJson = "^6.19.0"
+Time = "^1.6.0"
+
+[libraries]
+FirebaseESP32 = "https://github.com/mobizt/Firebase-ESP-Client.git"
+ArduinoJson = "https://github.com/bblanchon/ArduinoJson.git"
+Time = "https://github.com/PaulStoffregen/Time.git"
+
+[simulation]
+real_time = true
+auto_start = false
+serial_monitor = true
+
+[diagram]
+file = "wokwi-diagram.json"
+width = 800
+height = 600
+grid_size = 20
+
+[firebase]
+host = "verdanist-greenhouse-default-rtdb.firebaseio.com"
+auth = "YOUR_DATABASE_SECRET"
+device_id = "indoor-01"

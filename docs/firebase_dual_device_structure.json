@@ -1,0 +1,95 @@
+{
+  "devices": {
+    "indoor-01": {
+      "sensors": {
+        "temperature": 0,
+        "humidity": 0,
+        "heatIndex": 0,
+        "airQuality": 0,
+        "airQualityStatus": "Good",
+        "lightLevel": 0,
+        "timestamp": "",
+        "unitType": "indoor"
+      },
+      "controls": {
+        "fan": "off",
+        "alarm": "off",
+        "statusLED": "green"
+      },
+      "meta": {
+        "status": "online",
+        "lastSeen": "",
+        "wifiSignal": 0,
+        "freeHeap": 0,
+        "uptime": 0,
+        "unitType": "indoor",
+        "deviceModel": "ESP32-Indoor"
+      }
+    },
+    "outdoor-01": {
+      "sensors": {
+        "soilMoisture": 0,
+        "rainLevel": 0,
+        "isRaining": false,
+        "waterLevel": 0,
+        "waterDistance": 0,
+        "tankPercentage": 0,
+        "irrigationStatus": "Good",
+        "timestamp": "",
+        "unitType": "outdoor"
+      },
+      "controls": {
+        "waterPump": "off",
+        "valvePosition": "0",
+        "ledStatus": "green",
+        "autoMode": "on"
+      },
+      "meta": {
+        "status": "online",
+        "lastSeen": "",
+        "wifiSignal": 0,
+        "freeHeap": 0,
+        "uptime": 0,
+        "unitType": "outdoor",
+        "deviceModel": "ESP32-Outdoor"
+      }
+    }
+  },
+  "system": {
+    "totalDevices": 2,
+    "onlineDevices": 2,
+    "lastUpdate": "",
+    "systemStatus": "operational"
+  },
+  "automation": {
+    "indoorRules": {
+      "temperatureThreshold": {
+        "max": 35,
+        "min": 15,
+        "action": "fan"
+      },
+      "humidityThreshold": {
+        "max": 80,
+        "min": 30,
+        "action": "fan"
+      },
+      "airQualityThreshold": {
+        "max": 70,
+        "action": "alarm"
+      }
+    },
+    "outdoorRules": {
+      "soilMoistureThreshold": {
+        "min": 30,
+        "action": "irrigation"
+      },
+      "waterLevelThreshold": {
+        "min": 20,
+        "action": "stopIrrigation"
+      },
+      "rainDetection": {
+        "action": "stopIrrigation"
+      }
+    }
+  }
+}
