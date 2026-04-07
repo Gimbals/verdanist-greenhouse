@@ -213,10 +213,32 @@ Rekomendasi:
 • Gunakan pot dengan drainase yang baik
 
 Confidence: 95% | Processing: 1.2s`;
-      }
-      
-      // Default fallback for other queries
-      return `🌱 Sistem Greenhouse
+      } else if (lowerPrompt.includes("air") || lowerPrompt.includes("water") || lowerPrompt.includes("aquatic") || lowerPrompt.includes("hydroponic")) {
+        return `💊 Tanaman Air untuk Greenhouse
+
+Jenis Tanaman Air yang Cocok:
+1. **Lettuce (Selada)** - Tumbuh cepat, cocok untuk hidroponik
+2. **Spinach (Bayam)** - Kaya nutrisi, pertumbuhan cepat
+3. **Watercress (Selada air)** - Suka air, antioksidan tinggi
+4. **Mint (Daun mint)** - Tahan air, aroma segar
+5. **Kale (Kailan)** - Superfood, tahan air
+6. **Basil (Kemangi)** - Aromatik, suka kelembaban
+
+Parameter Optimal:
+- Suhu Air: 18-24°C
+- pH Air: 5.5-6.5
+- EC: 1.2-2.0 mS/cm
+- Sirkulasi: Konstan
+
+Rekomendasi:
+• Gunakan sistem hidroponik NFT atau DFT
+• Monitor pH dan EC setiap hari
+• Pastikan oksigen terlarut cukup
+• Ganti nutrisi setiap 2 minggu
+
+Confidence: 92% | Processing: 1.3s`;
+      } else if (lowerPrompt.includes("suhu") || lowerPrompt.includes("temperature") || lowerPrompt.includes("kelembaban") || lowerPrompt.includes("humidity") || lowerPrompt.includes("tanah") || lowerPrompt.includes("soil")) {
+        return `🌱 Sistem Greenhouse
 
 Status Saat Ini:
 - Suhu: 24-26°C (Optimal)
@@ -232,6 +254,10 @@ Rekomendasi:
 • Pastikan sirkulasi udara baik
 
 Confidence: 88% | Processing: 1.0s`;
+      }
+      
+      // Default fallback for other queries
+      return "Maaf, saya tidak mengerti pertanyaan Anda. Bisakah Anda mencoba bertanya tentang:\n• Tanaman kaktus\n• Tanaman air/hidroponik\n• Suhu dan kelembaban\n• Kondisi greenhouse?";
     }
   };
 
