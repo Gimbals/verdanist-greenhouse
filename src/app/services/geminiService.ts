@@ -323,11 +323,15 @@ let geminiService: GeminiService | null = null;
 export function getGeminiService(): GeminiService {
   if (!geminiService) {
     const apiKey = (import.meta as any).env.VITE_GEMINI_API_KEY;
+    console.log("🔑 Checking API Key:", apiKey ? "Found" : "Not found");
+    console.log("🔑 API Key value:", apiKey?.substring(0, 10) + "...");
+    
     if (!apiKey || apiKey === 'your-gemini-api-key-here') {
       console.warn("Gemini API key not found. Using simulation mode.");
       // Return mock service instead of throwing error
       return new MockGeminiService();
     }
+    console.log("✅ Using real Gemini API");
     geminiService = new GeminiService(apiKey);
   }
   return geminiService;
