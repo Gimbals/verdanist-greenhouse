@@ -121,13 +121,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const baseUrl = isProduction ? 'https://verdanist-greenhouse-g3e6.vercel.app' : window.location.origin;
         const redirectTo = `${baseUrl}/auth/callback`;
         
-        console.log("🔐 Google OAuth redirect to:", redirectTo);
+        console.log("🔐 Google OAuth Debug:");
+        console.log("- Is Production:", isProduction);
+        console.log("- Base URL:", baseUrl);
+        console.log("- Redirect URL:", redirectTo);
+        console.log("- Project ID:", projectId);
         
         const { error } = await supabase.auth.signInWithOAuth({
             provider: "google",
             options: { redirectTo },
         });
 
+        console.log("🔐 OAuth Response:", error);
+        
         if (error) throw error;
     } catch (error: any) {
         console.error("Login with Google error:", error);
@@ -143,7 +149,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } else {
           toast.error(msg || "Failed to login with Google");
         }
-        throw error;
     } finally {
         setIsLoading(false);
     }
