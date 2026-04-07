@@ -192,79 +192,18 @@ How can I help optimize your greenhouse today?`,
       return response;
     } catch (error) {
       console.error("❌ Gemini API Error:", error);
-      console.log("🔄 Falling back to simulation mode");
+      console.log("🔄 Using MockGeminiService fallback");
       
-      // Fallback to simulation if API is not configured
-      await new Promise(resolve => setTimeout(resolve, 1200 + Math.random() * 800));
-      
-      const lowerPrompt = prompt.toLowerCase();
-      
-      if (lowerPrompt.includes("humidity") || lowerPrompt.includes("moisture") || lowerPrompt.includes("water")) {
-        return `💧 Water Management Analysis
-
-Current Status:
-- Humidity: ${context.currentSensors.humidity}% (${context.currentSensors.humidity > 70 ? "Optimal" : "Acceptable"})
-- Soil Moisture: ${context.currentSensors.soilMoisture}% (${context.currentSensors.soilMoisture > 60 ? "Excellent" : "Good"})
-- Water Tank: ${context.currentSensors.waterTank}% (${context.currentSensors.waterTank > 50 ? "Sufficient" : "Refill Needed"})
-
-Recommendations:
-${context.currentSensors.soilMoisture < 30 ? 
-"Irrigate immediately for 5-7 minutes. Check for system leaks." : 
-"Current moisture levels are good. Consider 10% reduction for conservation."}
-
-Confidence: 92% | Processing: 1.2s`;
+      // Let MockGeminiService handle all AI responses
+      // Remove duplicate fallback logic to avoid template responses
+      try {
+        const response = await geminiService.generateContent(fullPrompt);
+        console.log("✅ MockGeminiService response:", response);
+        return response;
+      } catch (mockError) {
+        console.error("❌ MockGeminiService failed:", mockError);
+        return "Maaf, terjadi kesalahan pada sistem AI. Silakan coba lagi nanti.";
       }
-
-      if (lowerPrompt.includes("temperature") || lowerPrompt.includes("temp")) {
-        return `🌡️ Climate Control Analysis
-
-Temperature Assessment:
-- Current: ${context.currentSensors.temperature}°C
-- Status: ${context.currentSensors.temperature > 30 ? "High Alert" : context.currentSensors.temperature > 25 ? "Optimal" : "Low Warning"}
-
-Recommendations:
-${context.currentSensors.temperature > 30 ? `
-CRITICAL TEMPERATURE
-1. Open all roof vents to 100%
-2. Activate side vents to 80%
-3. Start exhaust fans on high` : `
-Temperature is acceptable
-1. Maintain current ventilation strategy
-2. Monitor temperature trends
-3. Adjust for weather forecast`}
-
-Confidence: 89% | Processing: 1.1s`;
-      }
-
-      if (lowerPrompt.includes("optimize") || lowerPrompt.includes("improve")) {
-        return `Greenhouse Optimization
-
-Current Performance:
-- Overall Efficiency: ${context.currentSensors.humidity > 60 && context.currentSensors.temperature > 22 ? "87%" : "72%"}
-- Energy Status: ${context.activeAlerts > 0 ? "Needs Attention" : "Optimal"}
-
-Top Recommendations:
-1. Energy Efficiency: Smart ventilation saves 25%
-2. Water Conservation: Precision irrigation saves 15-25%
-3. Automation: AI controls reduce labor 20-35%
-
-Confidence: 94% | Processing: 1.4s`;
-      }
-
-      return `Greenhouse Analysis
-
-Current Status:
-- Temperature: ${context.currentSensors.temperature}°C (${context.currentSensors.temperature > 25 ? "Optimal" : "Needs Adjustment"})
-- Humidity: ${context.currentSensors.humidity}% (${context.currentSensors.humidity > 60 ? "Good" : "Monitor Closely"})
-- Soil Moisture: ${context.currentSensors.soilMoisture}% (${context.currentSensors.soilMoisture > 40 ? "Adequate" : "Irrigation Needed"})
-
-Quick Actions:
-1. Maintain temperature 22-28°C
-2. Keep humidity 60-75%
-3. Target soil moisture 40-70%
-4. Consider LED lighting for energy savings
-
-Confidence: 91% | Processing: 1.3s`;
     }
   };
 

@@ -100,57 +100,124 @@ class MockGeminiService extends GeminiService {
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 1000));
     
-    // Generate contextual responses based on keywords
+    // Generate contextual responses based on keywords and simulated sensor data
     const lowerPrompt = prompt.toLowerCase();
     
+    // Simulate dynamic sensor data
+    const mockSensorData = {
+      temperature: 22 + Math.random() * 8, // 22-30°C
+      humidity: 60 + Math.random() * 20,  // 60-80%
+      soilMoisture: 40 + Math.random() * 30, // 40-70%
+      waterTank: 60 + Math.random() * 30,    // 60-90%
+      lightLevel: 70 + Math.random() * 25,   // 70-95%
+      ph: 6.0 + Math.random() * 1.5,         // 6.0-7.5
+      conductivity: 1.2 + Math.random() * 0.8 // 1.2-2.0 mS/cm
+    };
+    
     if (lowerPrompt.includes("humidity") || lowerPrompt.includes("moisture") || lowerPrompt.includes("water")) {
+      const humidity = mockSensorData.humidity.toFixed(1);
+      const soilMoisture = mockSensorData.soilMoisture.toFixed(1);
+      const waterTank = mockSensorData.waterTank.toFixed(1);
+      
       return `💧 Water Management Analysis
 
 Current Status:
-- Humidity: Optimal range (65-75%)
-- Soil Moisture: Good levels detected
-- Water Tank: Sufficient supply
+- Humidity: ${humidity}% (${parseFloat(humidity) > 70 ? "Optimal" : "Good"})
+- Soil Moisture: ${soilMoisture}% (${parseFloat(soilMoisture) > 60 ? "Excellent" : "Adequate"})
+- Water Tank: ${waterTank}% (${parseFloat(waterTank) > 50 ? "Sufficient" : "Refill Needed"})
 
 Recommendations:
-- Current watering schedule is appropriate
-- Monitor humidity levels daily
-- Consider increasing ventilation if humidity > 75%`;
+${parseFloat(soilMoisture) < 45 ? 
+  "• Increase irrigation frequency by 15%\n• Check drainage system\n• Monitor for dry spots" : 
+  "• Current irrigation schedule optimal\n• Consider 10% reduction for conservation\n• Monitor plant response"}
+
+Confidence: ${85 + Math.random() * 10}% | Processing: ${(1.2 + Math.random() * 0.8).toFixed(1)}s`;
     }
     
-    if (lowerPrompt.includes("temperature") || lowerPrompt.includes("heat")) {
+    if (lowerPrompt.includes("temperature") || lowerPrompt.includes("heat") || lowerPrompt.includes("temp")) {
+      const temp = mockSensorData.temperature.toFixed(1);
+      
       return `🌡️ Temperature Management
 
 Current Status:
-- Temperature: Within optimal range
-- No heat stress detected
+- Temperature: ${temp}°C (${parseFloat(temp) > 28 ? "Warm" : parseFloat(temp) < 24 ? "Cool" : "Optimal"})
+- System Status: Active
+- Ventilation: ${parseFloat(temp) > 28 ? "Increased" : "Normal"}
 
 Recommendations:
-- Maintain current temperature settings
-- Monitor for sudden temperature changes
-- Ensure proper air circulation`;
+${parseFloat(temp) > 28 ? 
+  "• Activate cooling system\n• Increase ventilation by 20%\n• Consider shade cloth" : 
+  parseFloat(temp) < 24 ? 
+  "• Reduce ventilation slightly\n• Monitor for cold spots\n• Maintain current heating" : 
+  "• Temperature is optimal\n• Maintain current settings\n• Continue monitoring"}
+
+Confidence: ${88 + Math.random() * 8}% | Processing: ${(1.1 + Math.random() * 0.7).toFixed(1)}s`;
     }
     
-    if (lowerPrompt.includes("light") || lowerPrompt.includes("sun")) {
+    if (lowerPrompt.includes("light") || lowerPrompt.includes("sun") || lowerPrompt.includes("led")) {
+      const lightLevel = mockSensorData.lightLevel.toFixed(1);
+      
       return `💡 Light Management
 
 Current Status:
-- Light levels: Adequate for plant growth
-- No light stress detected
+- Light Level: ${lightLevel}% (${parseFloat(lightLevel) > 85 ? "High" : parseFloat(lightLevel) > 70 ? "Optimal" : "Low"})
+- LED System: ${parseFloat(lightLevel) < 75 ? "Recommended increase" : "Optimal"}
+- Energy Usage: ${parseFloat(lightLevel) > 85 ? "High" : "Efficient"}
 
 Recommendations:
-- Current lighting schedule is optimal
-- Monitor plant response to light changes
-- Consider seasonal adjustments`;
+${parseFloat(lightLevel) < 75 ? 
+  "• Increase LED intensity by 15%\n• Extend light period by 1 hour\n• Check for shading issues" : 
+  parseFloat(lightLevel) > 85 ? 
+  "• Consider reducing intensity for energy savings\n• Optimize light schedule\n• Monitor plant stress" : 
+  "• Light levels are optimal\n• Maintain current schedule\n• Continue energy-efficient operation"}
+
+Confidence: ${90 + Math.random() * 7}% | Processing: ${(1.0 + Math.random() * 0.6).toFixed(1)}s`;
     }
+    
+    if (lowerPrompt.includes("nutrient") || lowerPrompt.includes("fertilizer") || lowerPrompt.includes("ph")) {
+      const ph = mockSensorData.ph.toFixed(1);
+      const conductivity = mockSensorData.conductivity.toFixed(1);
+      
+      return `🌿 Nutrient Management
+
+Current Status:
+- pH Level: ${ph} (${parseFloat(ph) > 6.8 ? "Slightly alkaline" : parseFloat(ph) < 6.3 ? "Slightly acidic" : "Optimal"})
+- EC Conductivity: ${conductivity} mS/cm (${parseFloat(conductivity) > 1.8 ? "High" : parseFloat(conductivity) < 1.4 ? "Low" : "Optimal"})
+- Nutrient Balance: ${parseFloat(ph) >= 6.3 && parseFloat(ph) <= 6.8 ? "Good" : "Needs adjustment"}
+
+Recommendations:
+${parseFloat(ph) < 6.3 ? 
+  "• Add pH buffer solution\n• Monitor calcium levels\n• Check root health" : 
+  parseFloat(ph) > 6.8 ? 
+  "• Add pH lowering solution\n• Reduce nutrient concentration\n• Monitor for nutrient lockout" : 
+  "• pH is optimal\n• Maintain current nutrient schedule\n• Continue regular monitoring"}
+
+Confidence: ${87 + Math.random() * 9}% | Processing: ${(1.3 + Math.random() * 0.7).toFixed(1)}s`;
+    }
+    
+    // Default greenhouse status with dynamic data
+    const temp = mockSensorData.temperature.toFixed(1);
+    const humidity = mockSensorData.humidity.toFixed(1);
+    const soilMoisture = mockSensorData.soilMoisture.toFixed(1);
     
     return `🌱 Greenhouse Status Update
 
-Your greenhouse systems are operating normally:
-- Environmental controls: Active
-- Sensor readings: Normal
-- Alert systems: Ready
+Current Conditions:
+- Temperature: ${temp}°C (Optimal Range: 22-28°C)
+- Humidity: ${humidity}% (Target: 60-75%)
+- Soil Moisture: ${soilMoisture}% (Target: 40-70%)
+- Water Tank: ${mockSensorData.waterTank.toFixed(1)}%
+- Light Level: ${mockSensorData.lightLevel.toFixed(1)}%
 
-For specific questions about watering, temperature, or lighting, please provide more details about your concern.`;
+System Status:
+- Environmental Controls: ✅ Active
+- Sensor Network: ✅ Online
+- Alert System: ✅ Ready
+- Data Updates: ✅ Real-time
+
+Overall Assessment: ${parseFloat(temp) >= 22 && parseFloat(temp) <= 28 && parseFloat(humidity) >= 60 && parseFloat(humidity) <= 75 ? "All systems operating optimally" : "Some parameters need attention"}
+
+Confidence: ${92 + Math.random() * 6}% | Processing: ${(1.1 + Math.random() * 0.5).toFixed(1)}s`;
   }
 }
 
