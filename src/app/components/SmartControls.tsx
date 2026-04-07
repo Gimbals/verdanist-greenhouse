@@ -256,8 +256,31 @@ Rekomendasi:
 Confidence: 88% | Processing: 1.0s`;
       }
       
-      // Default fallback for other queries
-      return "Maaf, saya tidak mengerti pertanyaan Anda. Bisakah Anda mencoba bertanya tentang:\n• Tanaman kaktus\n• Tanaman air/hidroponik\n• Suhu dan kelembaban\n• Kondisi greenhouse?";
+      // Default fallback - let MockGeminiService handle any question
+      try {
+        const response = await geminiService.generateContent(fullPrompt);
+        console.log("✅ MockGeminiService general response:", response);
+        return response;
+      } catch (mockError) {
+        console.error("❌ MockGeminiService failed:", mockError);
+        return `🤖 AI Assistant Verdanist
+
+Saya adalah asisten AI untuk sistem greenhouse Verdanist. Saya bisa membantu Anda dengan berbagai pertanyaan tentang:
+
+🌱 **Pertanian & Greenhouse:**
+- Perawatan tanaman dan sistem hidroponik
+- Kontrol suhu, kelembaban, dan nutrisi
+- Monitoring sensor real-time
+- Troubleshooting masalah umum
+
+💡 **General Knowledge:**
+- Teknologi pertanian modern
+- IoT dan smart automation
+- Sustainable farming practices
+- Data analytics untuk pertanian
+
+Tanyakan apa saja - saya akan mencoba membantu sebaik mungkin!`;
+      }
     }
   };
 

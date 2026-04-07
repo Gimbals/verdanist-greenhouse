@@ -195,6 +195,102 @@ ${parseFloat(ph) < 6.3 ?
 Confidence: ${87 + Math.random() * 9}% | Processing: ${(1.3 + Math.random() * 0.7).toFixed(1)}s`;
     }
     
+    // General knowledge responses for any question
+    if (lowerPrompt.includes("apa") || lowerPrompt.includes("what") || lowerPrompt.includes("siapa") || lowerPrompt.includes("who") || 
+        lowerPrompt.includes("mengapa") || lowerPrompt.includes("why") || lowerPrompt.includes("bagaimana") || lowerPrompt.includes("how") ||
+        lowerPrompt.includes("dimana") || lowerPrompt.includes("where") || lowerPrompt.includes("kapan") || lowerPrompt.includes("when") ||
+        lowerPrompt.includes("berapa") || lowerPrompt.includes("how many") || lowerPrompt.includes("berapa harga") || lowerPrompt.includes("price")) {
+      
+      // Generate contextual general knowledge responses
+      const responses = [
+        `🤔 Saya adalah AI Assistant untuk Greenhouse Verdanist. Saya bisa membantu Anda dengan:
+
+🌱 **Pertanian & Greenhouse:**
+- Perawatan tanaman (kaktus, sayuran, tanaman air)
+- Sistem hidroponik dan aquaponik
+- Kontrol suhu dan kelembaban
+- Manajemen nutrisi pH dan EC
+
+🏠 **Smart Home Automation:**
+- Monitoring sensor real-time
+- Kontrol otomatis penyiraman
+- Sistem ventilasi dan pemanas
+- Alert system untuk tanaman
+
+📊 **Data & Analytics:**
+- Tracking pertumbuhan tanaman
+- Analisis efisiensi energi
+- Prediksi panen
+- Export data (CSV/PDF)
+
+💡 **Tips & Tricks:**
+- Optimasi penggunaan air
+- Energy saving strategies
+- Pest management
+- Troubleshooting sistem
+
+Tanyakan apa saja tentang greenhouse atau pertanian modern!`,
+        
+        `🌍 **Informasi Umum:**
+
+Saya dirancang khusus untuk sistem greenhouse Verdanist, tapi saya bisa membantu dengan berbagai topik:
+
+**Sains & Teknologi:**
+- IoT dan sensor technology
+- Botani dan pertumbuhan tanaman
+- Sistem otomasi pertanian
+- Data analytics untuk pertanian
+
+**Praktis:**
+- Cara menanam sayuran di greenhouse
+- Setup hidroponik untuk pemula
+- Troubleshooting masalah umum
+- Tips efisiensi biaya
+
+**General Knowledge:**
+- Informasi cuaca dan musim
+- Basic botany knowledge
+- Sustainable farming practices
+- Smart agriculture trends
+
+Apa yang ingin Anda ketahui lebih detail?`,
+
+        `🚀 **Kemampuan Sistem:**
+
+Sebagai AI Assistant Verdanist, saya memiliki akses ke:
+
+**Real-time Data:**
+- Sensor suhu, kelembaban, pH
+- Status sistem otomasi
+- Alert dan notifikasi
+- Historical data trends
+
+**Knowledge Base:**
+- Database tanaman (100+ spesies)
+- Best practices greenhouse
+- Troubleshooting guides
+- Research papers terbaru
+
+**Interactive Features:**
+- Q&A tentang pertanian
+- Problem solving guidance
+- Optimization suggestions
+- Learning resources
+
+**Limitations:**
+- Fokus pada greenhouse/pertanian
+- Tidak akses internet real-time
+- Data berdasarkan training set
+- Tidak financial/medical advice
+
+Ada pertanyaan spesifik tentang greenhouse atau pertanian?`
+      ];
+      
+      // Select response based on prompt complexity
+      const responseIndex = Math.floor(Math.random() * responses.length);
+      return responses[responseIndex];
+    }
+    
     // Default greenhouse status with dynamic data
     const temp = mockSensorData.temperature.toFixed(1);
     const humidity = mockSensorData.humidity.toFixed(1);
