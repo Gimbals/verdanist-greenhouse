@@ -157,7 +157,7 @@ NODE_ENV=production
 PORT=3000
 DATABASE_URL=postgresql://postgres:password@localhost:5432/verdanist
 JWT_SECRET=your-super-secret-jwt-key-change-this
-VITE_GEMINI_API_KEY=AIzaSyA4OX9alrrmMGj0OiX7ZKdYzf9w4BILCFU
+VITE_GEMINI_API_KEY=your_gemini_api_key_here
 MQTT_BROKER=mqtt://your-mqtt-broker.com:1883
 ```
 
@@ -209,7 +209,7 @@ MQTT_BROKER=mqtt://your-mqtt-broker.com:1883
 5. Add Environment Variables:
    - NODE_ENV: production
    - JWT_SECRET: your-super-secret-jwt-key
-   - VITE_GEMINI_API_KEY: AIzaSyA4OX9alrrmMGj0OiX7ZKdYzf9w4BILCFU
+   - VITE_GEMINI_API_KEY: your_gemini_api_key_here
 6. Click "Add Variables"
 7. Click "Deploy Now"
 8. Wait 2-3 minutes → Backend live!
